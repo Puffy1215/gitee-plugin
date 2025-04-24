@@ -1,6 +1,5 @@
 package com.gitee.jenkins.gitee.api.impl;
 
-
 import com.gitee.jenkins.gitee.JacksonConfig;
 import com.gitee.jenkins.gitee.api.GiteeClient;
 import com.gitee.jenkins.gitee.api.GiteeClientBuilder;
@@ -24,11 +23,9 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.jboss.resteasy.client.jaxrs.ClientHttpEngine;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder.HostnameVerificationPolicy;
-import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient43Engine;
-import org.jboss.resteasy.client.jaxrs.internal.ResteasyClientBuilderImpl;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.resteasy.core.providerfactory.ResteasyProviderFactoryImpl;
 import org.jboss.resteasy.plugins.providers.JaxrsFormProvider;
 import org.kohsuke.accmod.Restricted;
@@ -57,7 +54,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.net.Proxy.Type.HTTP;
-
 
 @Restricted(NoExternalUse.class)
 public class ResteasyGiteeClientBuilder extends GiteeClientBuilder {
@@ -101,33 +97,37 @@ public class ResteasyGiteeClientBuilder extends GiteeClientBuilder {
 
         if (httpProxyConfig != null) {
             Proxy proxy = httpProxyConfig.createProxy(getHost(url));
-            if (proxy.type() == HTTP) {
-                InetSocketAddress address = (InetSocketAddress) proxy.address();
-                builder.defaultProxy(address.getHostString().replaceFirst("^.*://", ""),
-                    address.getPort(),
-                    address.getHostName().startsWith("https") ? "https" : "http",
-                    httpProxyConfig.getUserName(),
-                    httpProxyConfig.getSecretPassword().getPlainText());
-            }
+            // Fix to ClassCastException error
+            configureHttpProxy(builder, proxy, httpProxyConfig);
         }
 
-        GiteeApiProxy apiProxy = builder
-            .connectionPoolSize(60)
-            .maxPooledPerRoute(30)
-            .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-            .readTimeout(readTimeout, TimeUnit.SECONDS)
-            .register(new JacksonJsonProvider())
-            .register(new JacksonConfig())
-            .register(new ApiHeaderTokenFilter(apiToken))
-            .register(new LoggingFilter())
-            .register(new RemoveAcceptEncodingFilter())
-            .register(new JaxrsFormProvider())
-            .build().target(url)
-            .proxyBuilder(apiProxyClass)
-            .classloader(apiProxyClass.getClassLoader())
-            .build();
 
-        return new ResteasyGiteeClient(url, apiProxy, pullRequestIdProvider);
+        // Fix to classpath issue
+        // https://www.jenkins.io/doc/developer/plugin-development/dependencies-and-class-loading/#context-class-loaders
+        Thread t = Thread.currentThread();
+        ClassLoader orig = t.getContextClassLoader();
+        t.setContextClassLoader(apiProxyClass.getClassLoader());
+        try {
+            GiteeApiProxy apiProxy = ((ResteasyWebTarget) builder
+                    .connectionPoolSize(60)
+                    .maxPooledPerRoute( 30)
+                    .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                    .readTimeout(readTimeout, TimeUnit.SECONDS)
+                    .register(new JacksonJsonProvider())
+                    .register(new JacksonConfig())
+                    .register(new ApiHeaderTokenFilter(apiToken))
+                    .register(new LoggingFilter())
+                    .register(new RemoveAcceptEncodingFilter())
+                    .register(new JaxrsFormProvider())
+                    .build().target(url))
+                    .proxyBuilder(apiProxyClass)
+                    .classloader(t.getContextClassLoader())
+                    .build();
+
+            return new ResteasyGiteeClient(url, apiProxy, pullRequestIdProvider);
+        } finally {
+            t.setContextClassLoader(orig);
+        }
     }
 
     private String getHost(String url) {
@@ -136,6 +136,28 @@ public class ResteasyGiteeClientBuilder extends GiteeClientBuilder {
         } catch (MalformedURLException e) {
             return null;
         }
+    }
+
+    private ResteasyClientBuilder configureHttpProxy(ResteasyClientBuilder builder, Proxy proxy, ProxyConfiguration httpProxyConfig) {
+        if (proxy.type() == HTTP) {
+            InetSocketAddress address = (InetSocketAddress) proxy.address();
+            String username = httpProxyConfig.getUserName();
+            String password = httpProxyConfig.getSecretPassword().getPlainText();
+
+            int port = address.getPort();
+            String hostname = address.getHostString().replaceFirst("^.*://", "");
+
+            builder.defaultProxy(address.getHostString().replaceFirst("^.*://", ""),
+                    address.getPort(),
+                    address.getHostName().startsWith("https") ? "https" : "http");
+
+            if (username != null && password != null) {
+                CredentialsProvider proxyCredentials = new BasicCredentialsProvider();
+                proxyCredentials.setCredentials(new AuthScope(hostname, port),
+                        new UsernamePasswordCredentials(username, password));
+            }
+        }
+        return builder;
     }
 
     @Priority(Priorities.HEADER_DECORATOR)
@@ -227,30 +249,6 @@ public class ResteasyGiteeClientBuilder extends GiteeClientBuilder {
         @Override
         public void filter(ClientRequestContext clientRequestContext) {
             clientRequestContext.getHeaders().remove("Accept-Encoding");
-        }
-    }
-
-    private static class ResteasyClientBuilder extends ResteasyClientBuilderImpl {
-        private CredentialsProvider proxyCredentials;
-
-        @SuppressWarnings("UnusedReturnValue")
-        ResteasyClientBuilder defaultProxy(String hostname, int port, final String scheme, String username, String password) {
-            super.defaultProxy(hostname, port, scheme);
-            if (username != null && password != null) {
-                proxyCredentials = new BasicCredentialsProvider();
-                proxyCredentials.setCredentials(new AuthScope(hostname, port), new UsernamePasswordCredentials(username, password));
-            }
-            return this;
-        }
-
-        @SuppressWarnings("deprecation")
-        @Override
-        public ClientHttpEngine getHttpEngine() {
-            ApacheHttpClient43Engine httpEngine = (ApacheHttpClient43Engine) super.getHttpEngine();
-            if (proxyCredentials != null) {
-                ((DefaultHttpClient) httpEngine.getHttpClient()).setCredentialsProvider(proxyCredentials);
-            }
-            return httpEngine;
         }
     }
 }
