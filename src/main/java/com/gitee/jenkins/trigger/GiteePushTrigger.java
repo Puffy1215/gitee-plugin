@@ -807,7 +807,7 @@ public class GiteePushTrigger extends Trigger<Job<?, ?>> {
 
             public FormValidation doCheckGiteeApiRepo(@QueryParameter String value) {
                 if (StringUtils.isEmptyOrNull(value)) {
-                    return FormValidation.error("Gitee API Owner/Repo cannot be empty.");
+                    return FormValidation.error(Messages.Api_Repo_Owner()); // Gitee API 所有者/仓库不可以是空白的。
                 } else {
                     return FormValidation.ok();
                 }

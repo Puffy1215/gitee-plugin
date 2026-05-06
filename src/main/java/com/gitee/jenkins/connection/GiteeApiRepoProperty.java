@@ -25,7 +25,8 @@ public class GiteeApiRepoProperty extends JobProperty<Job<?, ?>> {
     private ListBoxModel options;
     private String repoOwner;
 
-    public GiteeApiRepoProperty() { }
+    public GiteeApiRepoProperty() {
+    }
 
     @Override
     public JobPropertyDescriptor getDescriptor() {
@@ -36,6 +37,10 @@ public class GiteeApiRepoProperty extends JobProperty<Job<?, ?>> {
 
     @DataBoundConstructor
     public GiteeApiRepoProperty(ListBoxModel options) {
+        setOptions(options);
+    }
+
+    public void setOptions(ListBoxModel options) {
         if (options == null) {
             this.options = new ListBoxModel();
         } else {
@@ -63,7 +68,7 @@ public class GiteeApiRepoProperty extends JobProperty<Job<?, ?>> {
         private ListBoxModel descriptorOptions;
 
         public DescriptorImpl() {
-            
+
         }
 
         @NonNull
@@ -96,12 +101,12 @@ public class GiteeApiRepoProperty extends JobProperty<Job<?, ?>> {
                 this.descriptorOptions = new ListBoxModel();
             } else {
                 this.descriptorOptions = options;
-            }   
+            }
         }
 
         private void addOption(String option) {
             if (descriptorOptions == null) {
-                descriptorOptions = new ListBoxModel(); 
+                descriptorOptions = new ListBoxModel();
             }
             Option newOption = new Option(option, option);
             for (Option testOption : descriptorOptions) {
@@ -112,14 +117,15 @@ public class GiteeApiRepoProperty extends JobProperty<Job<?, ?>> {
             descriptorOptions.add(option, option);
         }
 
-        public ListBoxModel doFillGiteeApiRepoItems() {   
+        public ListBoxModel doFillGiteeApiRepoItems() {
             if (descriptorOptions == null) {
                 load();
             }
-            return descriptorOptions;    
+            return descriptorOptions;
         }
 
-        public FormValidation doCheckRepoOwner(@QueryParameter String value, @QueryParameter String repo, @QueryParameter String owner) {
+        public FormValidation doCheckRepoOwner(@QueryParameter String value, @QueryParameter String repo,
+                @QueryParameter String owner) {
             Pattern pattern = Pattern.compile("[\\\\/\s]+");
             Matcher repoMatcher = pattern.matcher(repo);
             Matcher ownerMatcher = pattern.matcher(owner);
@@ -130,11 +136,11 @@ public class GiteeApiRepoProperty extends JobProperty<Job<?, ?>> {
             while (ownerMatcher.find()) {
                 return FormValidation.error(Messages.ban_characters("owner"));
             }
-            
+
             if (StringUtils.isEmptyOrNull(repo) && StringUtils.isEmptyOrNull(owner)) {
                 return FormValidation.ok(Messages.both_empty_inputs());
             }
-            
+
             if (StringUtils.isEmptyOrNull(repo)) {
                 return FormValidation.error(Messages.empty_input("repo"));
             }
@@ -159,7 +165,6 @@ public class GiteeApiRepoProperty extends JobProperty<Job<?, ?>> {
             boolean isRemoved = descriptorOptions.removeIf(elem -> elem.value.equals(repoOwner));
             return isRemoved;
         }
-
 
         @JavaScriptMethod
         public void addRepoOwner(String repo, String owner) {
