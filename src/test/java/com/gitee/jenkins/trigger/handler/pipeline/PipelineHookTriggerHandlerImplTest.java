@@ -12,7 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.gitee.jenkins.gitee.hook.model.PipelineHook;
 import com.gitee.jenkins.gitee.hook.model.User;
-import com.gitee.jenkins.trigger.filter.BranchFilterType;
+import com.gitee.jenkins.trigger.filter.FilterType;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
@@ -117,7 +117,7 @@ class PipelineHookTriggerHandlerImplTest {
                 project,
                 pipelineHook,
                 null, true,
-                newBranchFilter(branchFilterConfig().build(BranchFilterType.All)),
+                newBranchFilter(branchFilterConfig().build(FilterType.All)),
                 newPullRequestLabelFilter(null));
 
         buildTriggered.block(10000);
@@ -145,7 +145,7 @@ class PipelineHookTriggerHandlerImplTest {
                 project,
                 pipelineHook,
                 null, false,
-                newBranchFilter(branchFilterConfig().build(BranchFilterType.All)),
+                newBranchFilter(branchFilterConfig().build(FilterType.All)),
                 newPullRequestLabelFilter(null));
 
         buildTriggered.block(10000);

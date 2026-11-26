@@ -12,7 +12,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import com.gitee.jenkins.gitee.hook.model.NoteAction;
 import com.gitee.jenkins.trigger.filter.BranchFilterFactory;
-import com.gitee.jenkins.trigger.filter.BranchFilterType;
+import com.gitee.jenkins.trigger.filter.FilterType;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
@@ -89,7 +89,7 @@ class NoteHookTriggerHandlerImplTest {
                                 .build())
                         .build(),
                 null, true,
-                BranchFilterFactory.newBranchFilter(branchFilterConfig().build(BranchFilterType.All)),
+                BranchFilterFactory.newBranchFilter(branchFilterConfig().build(FilterType.All)),
                 newPullRequestLabelFilter(null));
 
         buildTriggered.block(10000);
@@ -182,7 +182,7 @@ class NoteHookTriggerHandlerImplTest {
                                         .build())
                                 .build())
                 .build(),
-                null, false, BranchFilterFactory.newBranchFilter(branchFilterConfig().build(BranchFilterType.All)),
+                null, false, BranchFilterFactory.newBranchFilter(branchFilterConfig().build(FilterType.All)),
                 newPullRequestLabelFilter(null));
 
         buildTriggered.block(10000);

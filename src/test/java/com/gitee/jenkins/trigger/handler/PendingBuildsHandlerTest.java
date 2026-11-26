@@ -14,7 +14,7 @@ import com.gitee.jenkins.gitee.hook.model.builder.generated.BranchDataBuilder;
 import com.gitee.jenkins.gitee.hook.model.builder.generated.PullRequestHookBuilder;
 import com.gitee.jenkins.gitee.hook.model.builder.generated.ProjectBuilder;
 import com.gitee.jenkins.gitee.hook.model.builder.generated.UserBuilder;
-import com.gitee.jenkins.trigger.filter.BranchFilterType;
+import com.gitee.jenkins.trigger.filter.FilterType;
 
 import hudson.model.Cause;
 import hudson.model.FreeStyleProject;
@@ -97,7 +97,7 @@ class PendingBuildsHandlerTest {
         giteePushTrigger.setTriggerOnAcceptedPullRequest(true);
         giteePushTrigger.setTriggerOnApprovedPullRequest(true);
         giteePushTrigger.setPendingBuildName(GITEE_BUILD_NAME);
-        giteePushTrigger.setBranchFilterType(BranchFilterType.NameBasedFilter);
+        giteePushTrigger.setBranchFilterType(FilterType.NameBasedFilter);
         giteePushTrigger.setBranchFilterName("");
         return giteePushTrigger;
     }

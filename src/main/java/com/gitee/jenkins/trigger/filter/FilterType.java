@@ -3,7 +3,7 @@ package com.gitee.jenkins.trigger.filter;
 /**
  * @author Robin Müller
  */
-public enum BranchFilterType {
+public enum FilterType {
     All,
     NameBasedFilter,
     RegexBasedFilter

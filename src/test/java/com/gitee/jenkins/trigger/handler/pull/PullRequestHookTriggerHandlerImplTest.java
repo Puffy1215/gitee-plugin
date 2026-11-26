@@ -27,7 +27,7 @@ import com.gitee.jenkins.gitee.hook.model.builder.generated.PullRequestHookBuild
 import com.gitee.jenkins.gitee.hook.model.builder.generated.PullRequestObjectAttributesBuilder;
 import com.gitee.jenkins.publisher.GiteeMessagePublisher;
 import com.gitee.jenkins.trigger.filter.BranchFilterFactory;
-import com.gitee.jenkins.trigger.filter.BranchFilterType;
+import com.gitee.jenkins.trigger.filter.FilterType;
 import com.gitee.jenkins.trigger.filter.BuildInstructionFilterType;
 
 import hidden.jth.org.apache.http.UnsupportedHttpVersionException;
@@ -676,7 +676,7 @@ class PullRequestHookTriggerHandlerImplTest {
                         .withRepo(project().withWebUrl("www.gitee.com").build())
                         .build(),
                 null, true,
-                BranchFilterFactory.newBranchFilter(branchFilterConfig().build(BranchFilterType.All)),
+                BranchFilterFactory.newBranchFilter(branchFilterConfig().build(FilterType.All)),
                 newPullRequestLabelFilter(null));
 
         buildTriggered.block(10000);
@@ -700,7 +700,7 @@ class PullRequestHookTriggerHandlerImplTest {
                         .withRepo(project().withWebUrl("www.gitee.com").build())
                         .build(),
                 null, true,
-                BranchFilterFactory.newBranchFilter(branchFilterConfig().build(BranchFilterType.All)),
+                BranchFilterFactory.newBranchFilter(branchFilterConfig().build(FilterType.All)),
                 newPullRequestLabelFilter(null));
 
         buildTriggered.block(10000);
@@ -872,7 +872,7 @@ class PullRequestHookTriggerHandlerImplTest {
                 project,
                 hook,
                 null, true,
-                BranchFilterFactory.newBranchFilter(branchFilterConfig().build(BranchFilterType.All)),
+                BranchFilterFactory.newBranchFilter(branchFilterConfig().build(FilterType.All)),
                 newPullRequestLabelFilter(null));
 
         buildTriggered.block(10000);
@@ -919,7 +919,7 @@ class PullRequestHookTriggerHandlerImplTest {
                                 .withMergeable(true)
                                 .build())
                         .build(),
-                BuildInstructionFilterType.CI_SKIP, false, BranchFilterFactory.newBranchFilter(branchFilterConfig().build(BranchFilterType.All)),
+                BuildInstructionFilterType.CI_SKIP, false, BranchFilterFactory.newBranchFilter(branchFilterConfig().build(FilterType.All)),
                 newPullRequestLabelFilter(null));
 
         buildTriggered.block(10000);

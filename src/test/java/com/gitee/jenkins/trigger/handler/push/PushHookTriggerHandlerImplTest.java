@@ -13,7 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.gitee.jenkins.gitee.hook.model.builder.generated.PushHookBuilder;
-import com.gitee.jenkins.trigger.filter.BranchFilterType;
+import com.gitee.jenkins.trigger.filter.FilterType;
 import com.gitee.jenkins.trigger.filter.PullRequestLabelFilterFactory;
 
 import hudson.Launcher;
@@ -84,7 +84,7 @@ class PushHookTriggerHandlerImplTest {
                                 commit().withMessage("[ci-skip]").build()))
                         .build(),
                 null, true,
-                newBranchFilter(branchFilterConfig().build(BranchFilterType.All)),
+                newBranchFilter(branchFilterConfig().build(FilterType.All)),
                 PullRequestLabelFilterFactory.newPullRequestLabelFilter(null));
 
         buildTriggered.block(10000);
@@ -147,7 +147,7 @@ class PushHookTriggerHandlerImplTest {
                         .withRef("refs/heads/" + git.nameRev().add(head).call().get(head))
                         .build(),
                 null, true,
-                newBranchFilter(branchFilterConfig().build(BranchFilterType.All)),
+                newBranchFilter(branchFilterConfig().build(FilterType.All)),
                 PullRequestLabelFilterFactory.newPullRequestLabelFilter(null));
 
         buildTriggered.block(10000);
@@ -216,7 +216,7 @@ class PushHookTriggerHandlerImplTest {
                 project,
                 pushHookBuilder.build(),
                 null, true,
-                newBranchFilter(branchFilterConfig().build(BranchFilterType.All)),
+                newBranchFilter(branchFilterConfig().build(FilterType.All)),
                 PullRequestLabelFilterFactory.newPullRequestLabelFilter(null));
         pushHookTriggerHandler.handle(
                 project,
@@ -225,7 +225,7 @@ class PushHookTriggerHandlerImplTest {
                         .withRef("refs/heads/" + git.nameRev().add(head).call().get(head) + "-2")
                         .build(),
                 null, true,
-                newBranchFilter(branchFilterConfig().build(BranchFilterType.All)),
+                newBranchFilter(branchFilterConfig().build(FilterType.All)),
                 PullRequestLabelFilterFactory.newPullRequestLabelFilter(null));
         buildTriggered.block(10000);
         assertThat(buildTriggered.isSignaled(), is(true));

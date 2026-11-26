@@ -101,7 +101,7 @@ public class GiteePushTrigger extends Trigger<Job<?, ?>> {
     private transient boolean addVoteOnPullRequest;
     private transient boolean allowAllBranches = false;
     private transient String branchFilterName;
-    private BranchFilterType branchFilterType;
+    private FilterType branchFilterType;
     private String includeBranchesSpec;
     private String excludeBranchesSpec;
     private String targetBranchRegex;
@@ -139,7 +139,7 @@ public class GiteePushTrigger extends Trigger<Job<?, ?>> {
             BuildInstructionFilterType buildInstructionFilterType,
             boolean setBuildDescription, boolean addNoteOnPullRequest, boolean addCiMessage,
             boolean addVoteOnPullRequest,
-            boolean acceptPullRequestOnSuccess, BranchFilterType branchFilterType,
+            boolean acceptPullRequestOnSuccess, FilterType branchFilterType,
             String includeBranchesSpec, String excludeBranchesSpec, String targetBranchRegex, String secretToken,
             boolean triggerOnPipelineEvent,
             boolean triggerOnApprovedPullRequest, String pendingBuildName, boolean cancelPendingBuildsOnUpdate,
@@ -330,7 +330,7 @@ public class GiteePushTrigger extends Trigger<Job<?, ?>> {
         return ciSkipFroTestNotRequired;
     }
 
-    public BranchFilterType getBranchFilterType() {
+    public FilterType getBranchFilterType() {
         return branchFilterType;
     }
 
@@ -494,7 +494,7 @@ public class GiteePushTrigger extends Trigger<Job<?, ?>> {
     }
 
     @DataBoundSetter
-    public void setBranchFilterType(BranchFilterType branchFilterType) {
+    public void setBranchFilterType(FilterType branchFilterType) {
         this.branchFilterType = branchFilterType;
     }
 
@@ -624,7 +624,7 @@ public class GiteePushTrigger extends Trigger<Job<?, ?>> {
 
     private void initializeBranchFilter() {
         if (branchFilterType == null) {
-            branchFilterType = BranchFilterType.All;
+            branchFilterType = FilterType.All;
         }
 
         branchFilter = BranchFilterFactory.newBranchFilter(branchFilterConfig()

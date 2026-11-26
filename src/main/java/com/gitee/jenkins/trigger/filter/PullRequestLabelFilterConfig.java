@@ -8,16 +8,24 @@ import org.kohsuke.stapler.DataBoundSetter;
  */
 public class PullRequestLabelFilterConfig {
 
+    private FilterType type;
     private String include;
     private String exclude;
+    private String regex;
 
-    public PullRequestLabelFilterConfig(String include, String exclude) {
+    public PullRequestLabelFilterConfig(FilterType type, String include, String exclude, String Regex) {
+        this.type = type;
         this.include = include;
         this.exclude = exclude;
+        this.regex = regex;
     }
 
     @DataBoundConstructor
     public PullRequestLabelFilterConfig() { }
+
+    public FilterType getType() {
+         return type;
+    }
 
     public String getInclude() {
         return include;
@@ -25,6 +33,10 @@ public class PullRequestLabelFilterConfig {
 
     public String getExclude() {
         return exclude;
+    }
+
+    public String getRegex() {
+        return regex;
     }
 
     @DataBoundSetter
@@ -37,9 +49,15 @@ public class PullRequestLabelFilterConfig {
         this.exclude = exclude;
     }
 
+    @DataBoundSetter 
+    public void setRegex(String regex) {
+        this.regex = regex;
+    }
+
     public static class PullRequestLabelFilterConfigBuilder {
         private String includeLabelSpec;
         private String excludeLabelSpec;
+        private String regex;
 
         public static PullRequestLabelFilterConfigBuilder pullRequestFilterConfig() {
             return new PullRequestLabelFilterConfigBuilder();
@@ -55,8 +73,13 @@ public class PullRequestLabelFilterConfig {
             return this;
         }
 
-        public PullRequestLabelFilterConfig build() {
-            return new PullRequestLabelFilterConfig(includeLabelSpec, excludeLabelSpec);
+        public PullRequestLabelFilterConfigBuilder withRegex(String regex) {
+            this.regex = regex;
+            return this;
+        }
+
+        public PullRequestLabelFilterConfig build(FilterType type) {
+            return new PullRequestLabelFilterConfig(type, includeLabelSpec, excludeLabelSpec, regex);
         }
     }
 }

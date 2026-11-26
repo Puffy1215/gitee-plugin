@@ -44,7 +44,7 @@ import com.gitee.jenkins.cause.CauseData.ActionType;
 import com.gitee.jenkins.cause.GiteeWebHookCause;
 import com.gitee.jenkins.gitee.hook.model.PullRequestHook;
 import com.gitee.jenkins.trigger.GiteePushTrigger;
-import com.gitee.jenkins.trigger.filter.BranchFilterType;
+import com.gitee.jenkins.trigger.filter.FilterType;
 
 /**
  * @author Robin Müller
@@ -98,7 +98,7 @@ class PullRequestBuildActionTest {
         gitRepoUrl = tmp.toURI().toString();
 
         // some defaults of the trigger
-        trigger.setBranchFilterType(BranchFilterType.All);
+        trigger.setBranchFilterType(FilterType.All);
     }
 
     @Test

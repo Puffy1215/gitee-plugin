@@ -17,7 +17,7 @@ class BranchFilterFactoryTest {
                 .withIncludeBranchesSpec("master")
                 .withExcludeBranchesSpec("develop")
                 .withTargetBranchRegex(".*")
-                .build(BranchFilterType.All));
+                .build(FilterType.All));
 
         assertThat(branchFilter, instanceOf(AllBranchesFilter.class));
     }
@@ -28,7 +28,7 @@ class BranchFilterFactoryTest {
                 .withIncludeBranchesSpec("master")
                 .withExcludeBranchesSpec("develop")
                 .withTargetBranchRegex(".*")
-                .build(BranchFilterType.NameBasedFilter));
+                .build(FilterType.NameBasedFilter));
 
         assertThat(branchFilter, instanceOf(NameBasedFilter.class));
     }
@@ -39,7 +39,7 @@ class BranchFilterFactoryTest {
                 .withIncludeBranchesSpec("master")
                 .withExcludeBranchesSpec("develop")
                 .withTargetBranchRegex(".*")
-                .build(BranchFilterType.RegexBasedFilter));
+                .build(FilterType.RegexBasedFilter));
 
         assertThat(branchFilter, instanceOf(RegexBasedFilter.class));
     }

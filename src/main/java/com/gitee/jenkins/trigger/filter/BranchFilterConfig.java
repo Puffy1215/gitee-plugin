@@ -5,19 +5,19 @@ package com.gitee.jenkins.trigger.filter;
  */
 public final class BranchFilterConfig {
 
-    private final BranchFilterType type;
+    private final FilterType type;
     private final String includeBranchesSpec;
     private final String excludeBranchesSpec;
     private final String targetBranchRegex;
 
-    private BranchFilterConfig(BranchFilterType type, String includeBranchesSpec, String excludeBranchesSpec, String targetBranchRegex) {
+    private BranchFilterConfig(FilterType type, String includeBranchesSpec, String excludeBranchesSpec, String targetBranchRegex) {
         this.type = type;
         this.includeBranchesSpec = includeBranchesSpec;
         this.excludeBranchesSpec = excludeBranchesSpec;
         this.targetBranchRegex = targetBranchRegex;
     }
 
-    public BranchFilterType getType() {
+    public FilterType getType() {
         return type;
     }
 
@@ -57,7 +57,7 @@ public final class BranchFilterConfig {
             return this;
         }
 
-        public BranchFilterConfig build(BranchFilterType type) {
+        public BranchFilterConfig build(FilterType type) {
             return new BranchFilterConfig(type, includeBranchesSpec, excludeBranchesSpec, targetBranchRegex);
         }
     }

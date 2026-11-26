@@ -132,12 +132,12 @@
         <f:textbox name="excludeLabelSpec" field="excludeLabelSpec" autoCompleteDelimChar=","/>
       </f:entry>
     </f:radioBlock>
-    <!-- <f:radioBlock name="PullRequestFilterType" value="RegexBasedFilter" title="Filter labels by regex"
+    <f:radioBlock name="PullRequestFilterType" value="RegexBasedFilter" title="Filter labels by regex"
                   inline="true">
       <f:entry title="Label Regex">
         <f:textbox name="targetBranchRegex" field="targetBranchRegex"/>
       </f:entry>
-    </f:radioBlock> -->
+    </f:radioBlock>
   </f:entry>
   <f:entry title="${%Secret.Token}" field="secretToken">
     <st:adjunct includes="com.gitee.jenkins.trigger.GiteePushTrigger.adjunct"/>
